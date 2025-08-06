@@ -1,0 +1,10 @@
+server:
+  port: 8082
+
+database:
+  host: localhost
+  port: 5432
+  user: scopeapi
+  password: yourpassword
+  dbname: scopeapi
+  sslmode: disable 
