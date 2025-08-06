@@ -49,7 +49,7 @@ ScopeAPI employs a distributed, microservices-based architecture designed for sc
 - **Security-First**: Zero-trust architecture
 - **Observability**: Full-stack monitoring and tracing
 
-For detailed architecture information, see [Technical Architecture](ScopeAPI_Technical_Architecture.md).
+For detailed architecture information, see [Technical Architecture](./docs/ScopeAPI_Technical_Architecture.md).
 
 ## 🚀 Quick Start
 
