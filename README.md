@@ -155,7 +155,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🏢 Enterprise
 
-For enterprise support, custom deployments, and professional services, please contact us at enterprise@scopeapi.com.
+For enterprise support, custom deployments, and professional services, please contact us at info@advaith.ai
 
 ---
 
