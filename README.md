@@ -65,7 +65,7 @@ For detailed architecture information, see [Technical Architecture](./docs/Scope
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/scopeapi.git
+   git clone https://github.com/advaith-ai/scopeapi.git
    cd scopeapi
    ```
 
@@ -150,8 +150,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 Support
 
 - **Documentation**: Check the [docs](docs/) directory
-- **Issues**: Report bugs and feature requests via [GitHub Issues](https://github.com/your-org/scopeapi/issues)
-- **Discussions**: Join the conversation in [GitHub Discussions](https://github.com/your-org/scopeapi/discussions)
+- **Issues**: Report bugs and feature requests via [GitHub Issues](https://github.com/advaith-ai/scopeapi/issues)
+- **Discussions**: Join the conversation in [GitHub Discussions](https://github.com/advaith-ai/scopeapi/discussions)
 
 ## 🏢 Enterprise
 
