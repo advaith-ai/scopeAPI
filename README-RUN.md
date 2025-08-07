@@ -19,6 +19,8 @@ This script will:
 - ✅ Start all services with proper configuration
 - ✅ Provide health check URLs
 
+**⚠️ Troubleshooting:** If you encounter issues, see [TROUBLESHOOTING.md](./docs/ScopeAPI_TroubleShooting.md) for common solutions.
+
 ### **Option 2: Manual Startup**
 
 If you prefer to start services individually:

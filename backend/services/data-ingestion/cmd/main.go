@@ -198,6 +198,9 @@ func main() {
 	// Start Kafka consumer for configuration updates (if available)
 	if kafkaConsumer != nil {
 		go func() {
+			backoff := time.Second
+			maxBackoff := 30 * time.Second
+			
 			for {
 				select {
 				case <-ctx.Done():
@@ -206,8 +209,16 @@ func main() {
 					messages, err := kafkaConsumer.Consume(ctx, 10)
 					if err != nil {
 						logger.Error("Failed to consume Kafka messages", "error", err)
+						// Exponential backoff to reduce log spam
+						time.Sleep(backoff)
+						if backoff < maxBackoff {
+							backoff *= 2
+						}
 						continue
 					}
+					
+					// Reset backoff on successful connection
+					backoff = time.Second
 
 					for _, message := range messages {
 						go processConfigUpdate(message, ingestionService, logger)
