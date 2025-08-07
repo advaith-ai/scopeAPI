@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { GatewayIntegrationService, Integration } from '../../services/gateway-integration.service';
+import { GatewayIntegrationService } from '../../services/gateway-integration.service';
+import { Integration, GatewayType, IntegrationStatus } from '../../../../core/models/gateway-integration.model';
 
 @Component({
   selector: 'app-gateway-integration-overview',
@@ -21,10 +22,15 @@ export class GatewayIntegrationOverviewComponent implements OnInit {
   // Gateway type distribution
   gatewayTypeStats: { [key: string]: number } = {};
 
+  // Make service public for template access and add Object/Math references
   constructor(
-    private gatewayIntegrationService: GatewayIntegrationService,
+    public gatewayIntegrationService: GatewayIntegrationService,
     private router: Router
   ) { }
+
+  // Add Object and Math references for template access
+  Object = Object;
+  Math = Math;
 
   ngOnInit(): void {
     this.loadIntegrations();
@@ -58,14 +64,14 @@ export class GatewayIntegrationOverviewComponent implements OnInit {
 
   calculateStatistics(): void {
     this.totalIntegrations = this.integrations.length;
-    this.activeIntegrations = this.integrations.filter(i => i.status.active === 'active').length;
-    this.errorIntegrations = this.integrations.filter(i => i.status.error === 'error').length;
-    this.pendingIntegrations = this.integrations.filter(i => i.status.pending === 'pending').length;
+    this.activeIntegrations = this.integrations.filter(i => i.status === IntegrationStatus.ACTIVE).length;
+    this.errorIntegrations = this.integrations.filter(i => i.status === IntegrationStatus.ERROR).length;
+    this.pendingIntegrations = this.integrations.filter(i => i.status === IntegrationStatus.PENDING).length;
 
     // Calculate gateway type distribution
     this.gatewayTypeStats = {};
     this.integrations.forEach(integration => {
-      const type = Object.keys(integration.type)[0];
+      const type = integration.type;
       this.gatewayTypeStats[type] = (this.gatewayTypeStats[type] || 0) + 1;
     });
   }
@@ -99,11 +105,8 @@ export class GatewayIntegrationOverviewComponent implements OnInit {
   onTestIntegration(integration: Integration): void {
     this.gatewayIntegrationService.testIntegration(integration.id).subscribe({
       next: (health) => {
-        // Update the integration's health status
-        const index = this.integrations.findIndex(i => i.id === integration.id);
-        if (index !== -1) {
-          this.integrations[index].health = health;
-        }
+        // Health status is not stored in the integration model
+        console.log('Integration health:', health);
       },
       error: (error) => {
         this.error = 'Failed to test integration';
@@ -119,7 +122,7 @@ export class GatewayIntegrationOverviewComponent implements OnInit {
           // Update last sync time
           const index = this.integrations.findIndex(i => i.id === integration.id);
           if (index !== -1) {
-            this.integrations[index].lastSync = result.timestamp;
+            this.integrations[index].lastSyncAt = new Date(result.timestamp);
           }
         } else {
           this.error = `Sync failed: ${result.message}`;
@@ -132,29 +135,25 @@ export class GatewayIntegrationOverviewComponent implements OnInit {
     });
   }
 
-  getGatewayTypeDisplayName(type: any): string {
-    const typeKey = Object.keys(type)[0];
-    return this.gatewayIntegrationService.getGatewayTypeDisplayName(typeKey);
+  getGatewayTypeDisplayName(type: GatewayType): string {
+    return this.gatewayIntegrationService.getGatewayTypeDisplayName(type);
   }
 
-  getGatewayTypeIcon(type: any): string {
-    const typeKey = Object.keys(type)[0];
-    return this.gatewayIntegrationService.getGatewayTypeIcon(typeKey);
+  getGatewayTypeIcon(type: GatewayType): string {
+    return this.gatewayIntegrationService.getGatewayTypeIcon(type);
   }
 
-  getStatusDisplayName(status: any): string {
-    const statusKey = Object.keys(status)[0];
-    return this.gatewayIntegrationService.getStatusDisplayName(statusKey);
+  getStatusDisplayName(status: IntegrationStatus): string {
+    return this.gatewayIntegrationService.getStatusDisplayName(status);
   }
 
-  getStatusColor(status: any): string {
-    const statusKey = Object.keys(status)[0];
-    return this.gatewayIntegrationService.getStatusColor(statusKey);
+  getStatusColor(status: IntegrationStatus): string {
+    return this.gatewayIntegrationService.getStatusColor(status);
   }
 
-  getHealthStatusColor(health?: any): string {
-    if (!health) return 'secondary';
-    return this.gatewayIntegrationService.getHealthStatusColor(health.status);
+  getHealthStatusColor(status?: string): string {
+    if (!status) return 'secondary';
+    return this.gatewayIntegrationService.getHealthStatusColor(status);
   }
 
   formatDate(dateString: string): string {
@@ -165,12 +164,11 @@ export class GatewayIntegrationOverviewComponent implements OnInit {
     return `${latency}ms`;
   }
 
-  getGatewayTypeRoute(type: any): string {
-    const typeKey = Object.keys(type)[0];
-    return `/gateway-integration/${typeKey}`;
+  getGatewayTypeRoute(type: GatewayType): string {
+    return `/gateway-integration/${type}`;
   }
 
-  onGatewayTypeClick(type: any): void {
+  onGatewayTypeClick(type: GatewayType): void {
     const route = this.getGatewayTypeRoute(type);
     this.router.navigate([route]);
   }

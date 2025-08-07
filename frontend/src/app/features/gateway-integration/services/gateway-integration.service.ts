@@ -2,62 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-
-export interface Integration {
-  id: string;
-  name: string;
-  type: GatewayType;
-  status: IntegrationStatus;
-  config: any;
-  credentials?: Credentials;
-  endpoints: Endpoint[];
-  health?: HealthStatus;
-  createdAt: string;
-  updatedAt: string;
-  lastSync?: string;
-}
-
-export interface GatewayType {
-  kong: 'kong';
-  nginx: 'nginx';
-  traefik: 'traefik';
-  envoy: 'envoy';
-  haproxy: 'haproxy';
-}
-
-export interface IntegrationStatus {
-  active: 'active';
-  inactive: 'inactive';
-  error: 'error';
-  pending: 'pending';
-}
-
-export interface Credentials {
-  type: CredentialType;
-  username?: string;
-  password?: string;
-  token?: string;
-  apiKey?: string;
-  certFile?: string;
-  keyFile?: string;
-}
-
-export interface CredentialType {
-  basic: 'basic';
-  token: 'token';
-  apiKey: 'api_key';
-  tls: 'tls';
-}
-
-export interface Endpoint {
-  id: string;
-  name: string;
-  url: string;
-  protocol: string;
-  port: number;
-  headers?: { [key: string]: string };
-  timeout: number;
-}
+import { Integration, GatewayType, IntegrationStatus, CredentialType, Endpoint } from '../../../core/models/gateway-integration.model';
 
 export interface HealthStatus {
   status: string;
@@ -152,11 +97,11 @@ export class GatewayIntegrationService {
   // Gateway Type Helpers
   getGatewayTypes(): GatewayType[] {
     return [
-      { kong: 'kong' },
-      { nginx: 'nginx' },
-      { traefik: 'traefik' },
-      { envoy: 'envoy' },
-      { haproxy: 'haproxy' }
+      GatewayType.KONG,
+      GatewayType.NGINX,
+      GatewayType.TRAEFIK,
+      GatewayType.ENVOY,
+      GatewayType.HAPROXY
     ];
   }
 
@@ -227,10 +172,10 @@ export class GatewayIntegrationService {
   // Credential Type Helpers
   getCredentialTypes(): CredentialType[] {
     return [
-      { basic: 'basic' },
-      { token: 'token' },
-      { apiKey: 'api_key' },
-      { tls: 'tls' }
+      CredentialType.BASIC,
+      CredentialType.TOKEN,
+      CredentialType.API_KEY,
+      CredentialType.TLS
     ];
   }
 
@@ -266,20 +211,12 @@ export class GatewayIntegrationService {
   validateEndpoint(endpoint: Endpoint): string[] {
     const errors: string[] = [];
 
-    if (!endpoint.name || endpoint.name.trim() === '') {
-      errors.push('Endpoint name is required');
-    }
-
     if (!endpoint.url || endpoint.url.trim() === '') {
       errors.push('Endpoint URL is required');
     }
 
-    if (!endpoint.protocol || endpoint.protocol.trim() === '') {
-      errors.push('Endpoint protocol is required');
-    }
-
-    if (!endpoint.port || endpoint.port <= 0) {
-      errors.push('Valid endpoint port is required');
+    if (!endpoint.method || endpoint.method.trim() === '') {
+      errors.push('Endpoint method is required');
     }
 
     return errors;
@@ -291,20 +228,28 @@ export class GatewayIntegrationService {
       {
         id: '1',
         name: 'Production Kong Gateway',
-        type: { kong: 'kong' },
-        status: { active: 'active' },
+        type: GatewayType.KONG,
+        status: IntegrationStatus.ACTIVE,
         config: {
           admin_url: 'http://kong-admin:8001',
           proxy_url: 'http://kong-proxy:8000'
+        },
+        credentials: {
+          type: CredentialType.BASIC,
+          username: 'admin',
+          password: 'password'
         },
         endpoints: [
           {
             id: '1',
             name: 'Admin API',
             url: 'http://kong-admin:8001',
+            method: 'GET',
             protocol: 'http',
             port: 8001,
-            timeout: 30000
+            timeout: 30000,
+            description: 'Admin API',
+            enabled: true
           }
         ],
         health: {
@@ -313,27 +258,35 @@ export class GatewayIntegrationService {
           lastCheck: new Date().toISOString(),
           latency: 45
         },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
         lastSync: new Date().toISOString()
       },
       {
         id: '2',
         name: 'Load Balancer NGINX',
-        type: { nginx: 'nginx' },
-        status: { active: 'active' },
+        type: GatewayType.NGINX,
+        status: IntegrationStatus.ACTIVE,
         config: {
           config_path: '/etc/nginx/nginx.conf',
           reload_command: 'nginx -s reload'
+        },
+        credentials: {
+          type: CredentialType.BASIC,
+          username: 'admin',
+          password: 'password'
         },
         endpoints: [
           {
             id: '2',
             name: 'HTTP',
             url: 'http://nginx:80',
+            method: 'GET',
             protocol: 'http',
             port: 80,
-            timeout: 30000
+            timeout: 30000,
+            description: 'HTTP',
+            enabled: true
           }
         ],
         health: {
@@ -342,8 +295,9 @@ export class GatewayIntegrationService {
           lastCheck: new Date().toISOString(),
           latency: 12
         },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastSync: new Date().toISOString()
       }
     ];
   }

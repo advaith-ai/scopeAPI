@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GatewayIntegrationService, Integration, HealthStatus, SyncResult } from '../../services/gateway-integration.service';
+import { GatewayIntegrationService } from '../../services/gateway-integration.service';
+import { Integration } from '../../../../core/models/gateway-integration.model';
+import { HealthStatus, SyncResult } from '../../services/gateway-integration.service';
 
 @Component({
   selector: 'app-integration-details',
@@ -20,6 +22,9 @@ export class IntegrationDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) { }
+
+  // Add Object reference for template access
+  Object = Object;
 
   ngOnInit(): void {
     this.loadIntegration();

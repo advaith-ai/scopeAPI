@@ -78,8 +78,8 @@
             <i class="fas fa-{{ getGatewayTypeIcon(type) }}"></i>
           </div>
           <div class="gateway-type-content">
-            <h4>{{ getGatewayTypeDisplayName(Object.keys(type)[0]) }}</h4>
-            <p>{{ gatewayTypeStats[Object.keys(type)[0]] || 0 }} integrations</p>
+            <h4>{{ getGatewayTypeDisplayName(type) }}</h4>
+            <p>{{ gatewayTypeStats[type] || 0 }} integrations</p>
           </div>
         </div>
       </div>
@@ -139,7 +139,7 @@
             </td>
             <td>
               <div *ngIf="integration.health" class="health-status">
-                <span class="badge badge-{{ getHealthStatusColor(integration.health) }}">
+                <span class="badge badge-{{ getHealthStatusColor(integration.health.status) }}">
                   {{ integration.health.status }}
                 </span>
                 <small class="text-muted d-block">{{ formatLatency(integration.health.latency) }}</small>

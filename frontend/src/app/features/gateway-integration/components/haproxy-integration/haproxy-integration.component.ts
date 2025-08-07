@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GatewayIntegrationService, Integration } from '../../services/gateway-integration.service';
+import { GatewayIntegrationService } from '../../services/gateway-integration.service';
+import { Integration, GatewayType, IntegrationStatus, CredentialType, Endpoint } from '../../../../core/models/gateway-integration.model';
 
 @Component({
   selector: 'app-haproxy-integration',
@@ -24,7 +25,7 @@ export class HAProxyIntegrationComponent implements OnInit {
 
     this.gatewayIntegrationService.getIntegrations().subscribe({
       next: (integrations) => {
-        this.haproxyIntegrations = integrations.filter(integration => integration.type === 'haproxy');
+        this.haproxyIntegrations = integrations.filter(integration => integration.type === GatewayType.HAPROXY);
         this.loading = false;
       },
       error: (error) => {

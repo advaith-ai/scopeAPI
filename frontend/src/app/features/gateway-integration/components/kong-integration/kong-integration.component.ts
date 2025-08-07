@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GatewayIntegrationService, Integration } from '../../services/gateway-integration.service';
+import { GatewayIntegrationService } from '../../services/gateway-integration.service';
+import { Integration, GatewayType, IntegrationStatus, CredentialType, Endpoint } from '../../../../core/models/gateway-integration.model';
 
 @Component({
   selector: 'app-kong-integration',
@@ -21,6 +22,9 @@ export class KongIntegrationComponent implements OnInit {
 
   constructor(private gatewayIntegrationService: GatewayIntegrationService) { }
 
+  // Add JSON reference for template access
+  JSON = JSON;
+
   ngOnInit(): void {
     this.loadKongIntegrations();
   }
@@ -31,7 +35,7 @@ export class KongIntegrationComponent implements OnInit {
 
     this.gatewayIntegrationService.getIntegrations().subscribe({
       next: (integrations) => {
-        this.kongIntegrations = integrations.filter(integration => integration.type === 'kong');
+        this.kongIntegrations = integrations.filter(integration => integration.type === GatewayType.KONG);
         this.loading = false;
       },
       error: (error) => {

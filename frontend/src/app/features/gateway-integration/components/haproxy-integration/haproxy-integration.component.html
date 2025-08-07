@@ -42,7 +42,7 @@
               (change)="selectIntegration(selectedIntegration!)">
               <option [ngValue]="null">-- Select HAProxy Integration --</option>
               <option *ngFor="let integration of haproxyIntegrations" [ngValue]="integration">
-                {{ integration.name }} ({{ integration.endpoints[0]?.url }})
+                {{ integration.name }} ({{ integration.endpoints[0].url }})
               </option>
             </select>
           </div>

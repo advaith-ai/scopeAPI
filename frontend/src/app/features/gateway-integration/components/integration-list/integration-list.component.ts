@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { GatewayIntegrationService, Integration, GatewayType, IntegrationStatus } from '../../services/gateway-integration.service';
+import { GatewayIntegrationService } from '../../services/gateway-integration.service';
+import { Integration, GatewayType, IntegrationStatus } from '../../../../core/models/gateway-integration.model';
 
 @Component({
   selector: 'app-integration-list',
@@ -43,8 +44,11 @@ export class IntegrationListComponent implements OnInit {
 
   constructor(
     private gatewayIntegrationService: GatewayIntegrationService,
-    private router: Router
+    public router: Router
   ) { }
+
+  // Add Math reference for template access
+  Math = Math;
 
   ngOnInit(): void {
     this.loadIntegrations();

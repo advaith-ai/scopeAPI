@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GatewayIntegrationService, Integration } from '../../services/gateway-integration.service';
+import { GatewayIntegrationService } from '../../services/gateway-integration.service';
+import { Integration, GatewayType, IntegrationStatus, CredentialType, Endpoint } from '../../../../core/models/gateway-integration.model';
 
 @Component({
   selector: 'app-envoy-integration',
@@ -24,7 +25,7 @@ export class EnvoyIntegrationComponent implements OnInit {
 
     this.gatewayIntegrationService.getIntegrations().subscribe({
       next: (integrations) => {
-        this.envoyIntegrations = integrations.filter(integration => integration.type === 'envoy');
+        this.envoyIntegrations = integrations.filter(integration => integration.type === GatewayType.ENVOY);
         this.loading = false;
       },
       error: (error) => {

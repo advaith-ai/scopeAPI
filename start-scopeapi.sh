@@ -110,8 +110,8 @@ check_postgresql() {
             return 0
         else
             print_status 1 "PostgreSQL is not running or not accessible"
-            print_status "Please start PostgreSQL and ensure it's accessible at $DB_HOST:$DB_PORT"
-            print_status "You can start PostgreSQL with: sudo systemctl start postgresql"
+            print_warning "Please start PostgreSQL and ensure it's accessible at $DB_HOST:$DB_PORT"
+            print_warning "You can start PostgreSQL with: sudo systemctl start postgresql"
             return 1
         fi
     else
@@ -125,14 +125,21 @@ check_kafka() {
     echo "[INFO] Checking Kafka connection..."
     
     if command_exists docker; then
-        if docker ps | grep -q kafka; then
-            print_status 0 "Kafka is running in Docker"
-            return 0
+        # Check if user has permission to run docker
+        if docker ps &>/dev/null; then
+            if docker ps | grep -q kafka; then
+                print_status 0 "Kafka is running in Docker"
+                return 0
+            else
+                print_status 1 "Kafka is not running or not accessible"
+                print_warning "Please start Kafka and ensure it's accessible at localhost:9092"
+                print_warning "You can start Kafka with Docker:"
+                print_warning "docker run -d --name kafka -p 9092:9092 confluentinc/cp-kafka:latest"
+                return 1
+            fi
         else
-            print_status 1 "Kafka is not running or not accessible"
-            print_status "Please start Kafka and ensure it's accessible at localhost:9092"
-            print_status "You can start Kafka with Docker:"
-            print_status "docker run -d --name kafka -p 9092:9092 confluentinc/cp-kafka:latest"
+            print_status 1 "Docker permission denied - add user to docker group or run with sudo"
+            print_warning "Run: sudo usermod -aG docker $USER && newgrp docker"
             return 1
         fi
     else

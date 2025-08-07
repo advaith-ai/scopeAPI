@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GatewayIntegrationService, Integration, GatewayType, IntegrationStatus, Endpoint, Credentials } from '../../services/gateway-integration.service';
+import { GatewayIntegrationService } from '../../services/gateway-integration.service';
+import { Integration, GatewayType, IntegrationStatus, Endpoint, Credentials } from '../../../../core/models/gateway-integration.model';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -52,7 +53,7 @@ export class IntegrationFormComponent implements OnInit, OnDestroy {
       if (params['id']) {
         this.isEditMode = true;
         this.integrationId = params['id'];
-        this.loadIntegration(this.integrationId);
+        this.loadIntegration(this.integrationId!);
       }
     });
 
