@@ -34,7 +34,7 @@ ScopeAPI employs a distributed, microservices-based architecture designed for sc
 
 ### **Technology Stack**
 - **Backend**: Go microservices with Gin framework
-- **Frontend**: Angular 17+ with TypeScript
+- **Admin Console**: Angular 17+ with TypeScript
 - **Databases**: PostgreSQL (relational), MongoDB (document), Neo4j (graph), Redis (cache)
 - **Message Queues**: Apache Kafka for event-driven communication
 - **ML/AI**: TensorFlow, PyTorch, Apache Spark
@@ -78,15 +78,15 @@ For detailed architecture information, see [Technical Architecture](./docs/Scope
    docker-compose up -d
    ```
 
-3. **Start the frontend**
+3. **Start the admin console**
    ```bash
-   cd frontend
+   cd adminConsole
    npm install
    npm start
    ```
 
 4. **Access the application**
-   - Frontend: http://localhost:4200
+   - Admin Console: http://localhost:4200
    - API Gateway: http://localhost:8080
 
 ### Development Setup
@@ -109,10 +109,10 @@ go mod tidy
 go run ./services/api-discovery/cmd/main.go
 ```
 
-### Frontend Development
+### Admin Console Development
 
 ```bash
-cd frontend
+cd adminConsole
 npm install
 ng serve
 ```
@@ -124,8 +124,8 @@ ng serve
 cd backend
 go test ./...
 
-# Frontend tests
-cd frontend
+# Admin Console tests
+cd adminConsole
 npm test
 ```
 
@@ -133,7 +133,7 @@ npm test
 
 Configuration files are located in:
 - Backend services: `backend/config/`
-- Frontend: `frontend/src/environments/`
+- Admin Console: `adminConsole/src/environments/`
 
 ## 🤝 Contributing
 

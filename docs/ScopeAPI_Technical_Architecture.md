@@ -261,7 +261,7 @@ The core components include:
 - Configuration management for blocking rules and test cases
 - Audit logs and reporting
 
-**Technology Considerations**: Angular for frontend; RESTful APIs for backend communication
+**Technology Considerations**: Angular for admin console; RESTful APIs for backend communication
 
 ### 4.10 Cloud Intelligence Platform
 
@@ -284,7 +284,7 @@ The core components include:
 - **Databases**: PostgreSQL, MongoDB, Neo4j, Redis
 - **Containerization**: Docker, Kubernetes
 
-### 5.2 Frontend Technologies
+### 5.2 Admin Console Technologies
 - **Framework**: Angular with TypeScript
 - **UI Components**: Angular Material or similar
 - **State Management**: NgRx or similar

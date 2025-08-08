@@ -60,17 +60,17 @@ docker-compose up -d kafka
 **Option 2: Disable Kafka (Recommended for development)**
 The service will work without Kafka. The error messages will be reduced with exponential backoff.
 
-### 4. Frontend Compilation Errors
+### 4. Admin Console Compilation Errors
 
 **Error:**
-Multiple TypeScript compilation errors in Angular frontend.
+Multiple TypeScript compilation errors in Angular admin console.
 
 **Solution:**
-These are development-time errors that don't prevent the service from running. The frontend will still be accessible at `http://localhost:4200`.
+These are development-time errors that don't prevent the service from running. The admin console will still be accessible at `http://localhost:4200`.
 
 To fix the compilation errors:
 ```bash
-cd frontend
+cd adminConsole
 npm install
 npm audit fix
 ```
@@ -120,7 +120,7 @@ After starting the platform, verify all services are running:
 curl http://localhost:8080/health
 curl http://localhost:8080/metrics
 
-# Check frontend
+# Check admin console
 curl http://localhost:4200
 ```
 
@@ -151,14 +151,14 @@ export KAFKA_TOPIC_PREFIX=scopeapi
 ### Development Mode
 - Kafka is optional
 - PostgreSQL can be local or Docker
-- Frontend runs in development mode
+- Admin Console runs in development mode
 - Detailed logging enabled
 
 ### Production Mode
 - All services required
 - Proper database setup
 - Kafka cluster required
-- Frontend built for production
+- Admin Console built for production
 
 ## Getting Help
 
@@ -187,6 +187,6 @@ sudo systemctl start postgresql
 
 The platform will start with:
 - Data Ingestion Service: http://localhost:8080
-- Frontend: http://localhost:4200
+- Admin Console: http://localhost:4200
 - Health Check: http://localhost:8080/health
 - Metrics: http://localhost:8080/metrics 

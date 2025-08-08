@@ -20,7 +20,7 @@ scopeAPI/
 │   ├── setup-database-integration.sh
 │   └── setup-database.sh
 ├── backend/                         # Backend microservices
-├── frontend/                        # Angular frontend application
+├── adminConsole/                    # Angular admin console application
 └── docs/                           # Project documentation
 ```
 
@@ -198,19 +198,19 @@ backend/
             └── config.go
 ```
 
-## Frontend Structure
+## Admin Console Structure
 
 ```
-frontend/
+adminConsole/
 ├── angular.json                     # Angular CLI configuration
 ├── package.json                     # Node.js dependencies
 ├── package-lock.json                # Locked dependency versions
-├── README.md                        # Frontend-specific documentation
+├── README.md                        # Admin Console-specific documentation
 ├── tsconfig.json                    # TypeScript configuration
 ├── tsconfig.app.json                # App-specific TypeScript config
 ├── tsconfig.spec.json               # Test TypeScript configuration
 ├── .editorconfig                    # Editor configuration
-├── .gitignore                       # Frontend-specific git ignore
+├── .gitignore                       # Admin Console-specific git ignore
 └── src/
     ├── app/
     │   ├── app-routing.module.ts    # Main routing configuration
@@ -403,7 +403,7 @@ The `docker-compose.yml` file defines the complete development environment inclu
 - Kafka and Zookeeper for messaging
 - All 5 backend microservices
 - NGINX API Gateway
-- Frontend Angular application
+- Admin Console Angular application
 - Prometheus and Grafana for monitoring
 
 ### Go Workspace
@@ -431,7 +431,7 @@ The `angular.json` file configures the Angular CLI build process, including:
 
 3. Database migrations are managed through the shared PostgreSQL package
 
-### Frontend Development
+### Admin Console Development
 1. Feature-based architecture with lazy-loaded modules
 2. Core functionality in the `core/` directory
 3. Shared components in the `shared/` directory
@@ -439,7 +439,7 @@ The `angular.json` file configures the Angular CLI build process, including:
 
 ### Testing
 - Backend: Unit tests with Go's testing package and testify
-- Frontend: Unit tests with Jasmine and Karma
+- Admin Console: Unit tests with Jasmine and Karma
 - Integration tests for API endpoints
 - End-to-end tests for critical user flows
 
@@ -453,7 +453,7 @@ The `angular.json` file configures the Angular CLI build process, including:
 
 1. Clone the repository
 2. Run `docker-compose up` to start the development environment
-3. Access the frontend at `http://localhost:4200`
+3. Access the admin console at `http://localhost:4200`
 4. API documentation available at `http://localhost:8080/docs`
 
 For detailed setup instructions, see `README-RUN.md`. 

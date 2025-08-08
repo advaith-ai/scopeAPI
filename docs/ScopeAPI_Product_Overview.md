@@ -168,7 +168,7 @@ ScopeAPI employs a distributed, microservices-based architecture designed for sc
 ## 🛠️ Technology Stack
 
 - **Backend**: Go
-- **Frontend**: Angular with TypeScript
+- **Admin Console**: Angular with TypeScript
 - **Databases**: PostgreSQL, MongoDB, Neo4j, Redis
 - **Message Queues**: Apache Kafka
 - **ML/AI**: TensorFlow, PyTorch, Apache Spark

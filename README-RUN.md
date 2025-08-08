@@ -89,9 +89,9 @@ go run cmd/main.go
 - **URL**: http://localhost:8080
 - **Health**: http://localhost:8080/health
 
-**Frontend:**
+**Admin Console:**
 ```bash
-cd frontend
+cd adminConsole
 npm install
 npm start
 ```
@@ -106,7 +106,7 @@ npm start
 | **Data Ingestion** | ✅ Complete | 8080 | Captures and processes API traffic |
 | **API Discovery** | ✅ Complete | 8081 | Discovers and catalogs API endpoints |
 | **Threat Detection** | ✅ Complete | 8082 | Detects malicious API requests |
-| **Frontend** | ✅ Complete | 4200 | Angular UI dashboard |
+| **Admin Console** | ✅ Complete | 4200 | Angular UI dashboard |
 
 ### **⚠️ Needs Implementation**
 
@@ -209,7 +209,7 @@ curl http://localhost:8081/health
 # Threat Detection
 curl http://localhost:8082/health
 
-# Frontend
+# Admin Console
 curl http://localhost:4200
 ```
 
@@ -296,7 +296,7 @@ Each service provides REST API endpoints:
 ## 🎯 Next Steps
 
 1. **Test all services** using the provided examples
-2. **Explore the frontend** at http://localhost:4200
+2. **Explore the admin console** at http://localhost:4200
 3. **Implement missing components** (Attack Blocking, Data Protection)
 4. **Add authentication** and security features
 5. **Scale the services** for production use
