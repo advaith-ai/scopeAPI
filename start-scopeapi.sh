@@ -154,18 +154,25 @@ start_data_ingestion() {
     
     # Build services using centralized Makefile
     echo "[INFO] Building backend services..."
-    cd backend
+    local project_root="$(cd "$(dirname "$0")" && pwd)"
+    cd "$project_root/backend"
     if make data-ingestion; then
         echo "[SUCCESS] Data Ingestion Service built successfully"
         
         # Start the service from root bin directory
         echo "[INFO] Starting Data Ingestion Service on port $DATA_INGESTION_PORT..."
-        cd ..
-        ./bin/data-ingestion &
+        cd "$project_root"
+        PORT=$DATA_INGESTION_PORT ./bin/data-ingestion > logs/data-ingestion.log 2>&1 &
         DATA_INGESTION_PID=$!
         echo "[SUCCESS] Data Ingestion Service started with PID: $DATA_INGESTION_PID"
+        sleep 2  # Give service time to start
+        # Check if process is still running
+        if ! kill -0 $DATA_INGESTION_PID 2>/dev/null; then
+            echo "[ERROR] Data Ingestion Service failed to start. Check logs/data-ingestion.log"
+        fi
     else
         echo "[ERROR] Failed to build Data Ingestion Service"
+        cd "$project_root"
         exit 1
     fi
 }
@@ -175,18 +182,25 @@ start_api_discovery() {
     echo "[INFO] Starting API Discovery Service..."
     
     # Build API Discovery Service
-    cd backend
+    local project_root="$(cd "$(dirname "$0")" && pwd)"
+    cd "$project_root/backend"
     if make api-discovery; then
         echo "[SUCCESS] API Discovery Service built successfully"
         
         # Start the service from root bin directory
         echo "[INFO] Starting API Discovery Service on port $API_DISCOVERY_PORT..."
-        cd ..
-        ./bin/api-discovery &
+        cd "$project_root"
+        PORT=$API_DISCOVERY_PORT ./bin/api-discovery > logs/api-discovery.log 2>&1 &
         API_DISCOVERY_PID=$!
         echo "[SUCCESS] API Discovery Service started with PID: $API_DISCOVERY_PID"
+        sleep 2  # Give service time to start
+        # Check if process is still running
+        if ! kill -0 $API_DISCOVERY_PID 2>/dev/null; then
+            echo "[ERROR] API Discovery Service failed to start. Check logs/api-discovery.log"
+        fi
     else
         echo "[ERROR] Failed to build API Discovery Service"
+        cd "$project_root"
         return 1
     fi
 }
@@ -196,27 +210,31 @@ start_threat_detection() {
     echo "[INFO] Starting Threat Detection Service..."
     
     # Build Threat Detection Service (if compilation issues are fixed)
-    cd backend
+    local project_root="$(cd "$(dirname "$0")" && pwd)"
+    cd "$project_root/backend"
     if make threat-detection 2>/dev/null; then
         echo "[SUCCESS] Threat Detection Service built successfully"
         
         # Start the service from root bin directory
         echo "[INFO] Starting Threat Detection Service on port $THREAT_DETECTION_PORT..."
-        cd ..
+        cd "$project_root"
         ./bin/threat-detection &
         THREAT_DETECTION_PID=$!
         echo "[SUCCESS] Threat Detection Service started with PID: $THREAT_DETECTION_PID"
     else
         echo "[WARNING] Threat Detection Service has compilation issues, skipping..."
+        cd "$project_root"
         return 0
     fi
 }
 
-# Start Admin Console
+    # Start Admin Console
 start_admin_console() {
     echo "[INFO] Starting Admin Console..."
     
-    cd adminConsole
+    # Ensure we're in the project root and go to adminConsole
+    local project_root="$(cd "$(dirname "$0")" && pwd)"
+    cd "$project_root/adminConsole"
     
     # Check if admin console dependencies are installed
     if [ -d "node_modules" ]; then
@@ -231,7 +249,9 @@ start_admin_console() {
     ADMIN_CONSOLE_PID=$!
     echo "[SUCCESS] Admin Console started with PID: $ADMIN_CONSOLE_PID"
     
-    cd ..
+    # Return to project root
+    local project_root="$(cd "$(dirname "$0")" && pwd)"
+    cd "$project_root"
 }
 
 # Main execution

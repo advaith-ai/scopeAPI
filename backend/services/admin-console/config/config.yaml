@@ -39,9 +39,9 @@ redis:
 
 services:
   api_discovery:
-    url: "http://api-discovery:8080"
+    url: "http://api-discovery:8081"
   threat_detection:
-    url: "http://threat-detection:8080"
+    url: "http://threat-detection:8082"
   data_protection:
     url: "http://data-protection:8080"
   gateway_integration:

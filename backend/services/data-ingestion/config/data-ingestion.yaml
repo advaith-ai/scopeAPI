@@ -1,126 +1,15 @@
 server:
-  port: "8080"
-  host: "0.0.0.0"
-  read_timeout: 30s
-  write_timeout: 30s
-  idle_timeout: 60s
+  port: 8080
 
 database:
-  postgresql:
-    host: "localhost"
-    port: 5432
-    user: "postgres"
-    password: "password"
-    database: "scopeapi"
-    ssl_mode: "disable"
-    max_conns: 10
+  host: localhost
+  port: 5432
+  user: postgres
+  password: password
+  dbname: scopeapi
+  sslmode: disable
 
-messaging:
-  kafka:
-    brokers: ["localhost:9092"]
-    topic_prefix: "scopeapi"
-    producer:
-      acks: "all"
-      retries: 3
-      batch_size: 16384
-      batch_timeout: 1s
-      compression: "snappy"
-      max_message_size: 1048576
-    consumer:
-      group_id: "data-ingestion"
-      auto_offset_reset: "earliest"
-      session_timeout: 30s
-      heartbeat_interval: 3s
-      max_poll_records: 500
-      max_poll_interval: 300s
-
-ingestion:
-  batch_size: 1000
-  batch_timeout: 5s
-  max_concurrency: 10
-  buffer_size: 10000
-  retry_attempts: 3
-  retry_delay: 1s
-  validation: true
-  compression: false
-  topics:
-    api_traffic: "api_traffic"
-    security_events: "security_events"
-    config_updates: "config_updates"
-    alerts: "alerts"
-    metrics: "metrics"
-  formats:
-    supported: ["json", "xml", "yaml", "protobuf"]
-    default: "json"
-
-parser:
-  max_payload_size: 10485760  # 10MB
-  timeout: 30s
-  formats:
-    - name: "json"
-      extensions: [".json"]
-      mime_types: ["application/json"]
-      enabled: true
-      priority: 1
-    - name: "xml"
-      extensions: [".xml"]
-      mime_types: ["application/xml", "text/xml"]
-      enabled: true
-      priority: 2
-    - name: "yaml"
-      extensions: [".yaml", ".yml"]
-      mime_types: ["application/x-yaml", "text/yaml"]
-      enabled: true
-      priority: 3
-
-normalizer:
-  default_schema: "api_traffic"
-  schemas:
-    api_traffic:
-      name: "api_traffic"
-      version: "1.0"
-      fields:
-        timestamp:
-          type: "string"
-          required: true
-          format: "datetime"
-        method:
-          type: "string"
-          required: true
-        path:
-          type: "string"
-          required: true
-        status_code:
-          type: "integer"
-          required: false
-        request_size:
-          type: "integer"
-          required: false
-        response_size:
-          type: "integer"
-          required: false
-      required: ["timestamp", "method", "path"]
-
-queue:
-  max_size: 10000
-  flush_interval: 1s
-  retry_policy:
-    max_attempts: 3
-    backoff: 1s
-    max_backoff: 60s
-
-security:
-  enable_tls: false
-  allowed_hosts: ["*"]
-  rate_limit:
-    enabled: true
-    requests: 1000
-    window: 1m
-
-monitoring:
-  metrics:
-    enabled: true
-    path: "/metrics"
-  health:
-    enabled: true
-    path: "/health" 
+kafka:
+  brokers:
+    - localhost:9092
+  topic: scopeapi-data
