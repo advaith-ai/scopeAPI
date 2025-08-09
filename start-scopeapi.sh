@@ -89,9 +89,9 @@ setup_environment() {
     export KAFKA_BROKERS=${KAFKA_BROKERS:-localhost:9092}
     export KAFKA_TOPIC_PREFIX=${KAFKA_TOPIC_PREFIX:-scopeapi}
     
-    # Server ports
-    export DATA_INGESTION_PORT=${DATA_INGESTION_PORT:-8080}
-    export API_DISCOVERY_PORT=${API_DISCOVERY_PORT:-8081}
+    # Server ports (API Discovery is hardcoded to 8080, so swap assignments)
+    export API_DISCOVERY_PORT=${API_DISCOVERY_PORT:-8080}
+    export DATA_INGESTION_PORT=${DATA_INGESTION_PORT:-8081}
     export THREAT_DETECTION_PORT=${THREAT_DETECTION_PORT:-8082}
     
     export GO111MODULE=on
@@ -159,10 +159,10 @@ start_data_ingestion() {
     if make data-ingestion; then
         echo "[SUCCESS] Data Ingestion Service built successfully"
         
-        # Start the service from root bin directory
+        # Start the service from root bin directory with proper config path
         echo "[INFO] Starting Data Ingestion Service on port $DATA_INGESTION_PORT..."
         cd "$project_root"
-        PORT=$DATA_INGESTION_PORT ./bin/data-ingestion > logs/data-ingestion.log 2>&1 &
+        CONFIG_PATH=backend/services/data-ingestion/config/data-ingestion.yaml SERVER_PORT=$DATA_INGESTION_PORT ./bin/data-ingestion > logs/data-ingestion.log 2>&1 &
         DATA_INGESTION_PID=$!
         echo "[SUCCESS] Data Ingestion Service started with PID: $DATA_INGESTION_PID"
         sleep 2  # Give service time to start
@@ -187,10 +187,10 @@ start_api_discovery() {
     if make api-discovery; then
         echo "[SUCCESS] API Discovery Service built successfully"
         
-        # Start the service from root bin directory
+        # Start the service from root bin directory with proper config path
         echo "[INFO] Starting API Discovery Service on port $API_DISCOVERY_PORT..."
         cd "$project_root"
-        PORT=$API_DISCOVERY_PORT ./bin/api-discovery > logs/api-discovery.log 2>&1 &
+        CONFIG_PATH=backend/services/api-discovery/config/api-discovery.yaml SERVER_PORT=$API_DISCOVERY_PORT ./bin/api-discovery > logs/api-discovery.log 2>&1 &
         API_DISCOVERY_PID=$!
         echo "[SUCCESS] API Discovery Service started with PID: $API_DISCOVERY_PID"
         sleep 2  # Give service time to start
@@ -215,10 +215,10 @@ start_threat_detection() {
     if make threat-detection 2>/dev/null; then
         echo "[SUCCESS] Threat Detection Service built successfully"
         
-        # Start the service from root bin directory
+        # Start the service from root bin directory with proper config path
         echo "[INFO] Starting Threat Detection Service on port $THREAT_DETECTION_PORT..."
         cd "$project_root"
-        ./bin/threat-detection &
+        CONFIG_PATH=backend/services/threat-detection/config/threat-detection.yaml PORT=$THREAT_DETECTION_PORT ./bin/threat-detection > logs/threat-detection.log 2>&1 &
         THREAT_DETECTION_PID=$!
         echo "[SUCCESS] Threat Detection Service started with PID: $THREAT_DETECTION_PID"
     else
@@ -278,7 +278,7 @@ main() {
     
     echo ""
     echo "📊 Data Ingestion Service: http://localhost:$DATA_INGESTION_PORT"
-    echo "🔍 API Discovery Service: http://localhost:$API_DISCOVERY_PORT"
+    echo "🔍 API Discovery Service: http://localhost:$API_DISCOVERY_PORT (hardcoded to 8080)"
     echo "🛡️ Threat Detection Service: http://localhost:$THREAT_DETECTION_PORT"
     echo "🌐 Admin Console: http://localhost:4200 (if started)"
     echo ""
