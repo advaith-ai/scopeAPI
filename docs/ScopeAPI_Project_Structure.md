@@ -16,6 +16,10 @@ scopeAPI/
 ├── go.work.sum                      # Go workspace checksums
 ├── scopeAPI.code-workspace          # VS Code workspace configuration
 ├── start-scopeapi.sh                # Automated startup script
+├── bin/                             # Compiled binaries
+│   ├── api-discovery
+│   ├── data-ingestion
+│   └── threat-detection
 ├── scripts/                         # Utility scripts
 │   ├── setup-database-integration.sh
 │   └── setup-database.sh
@@ -28,9 +32,6 @@ scopeAPI/
 
 ```
 backend/
-├── bin/                            # Compiled binaries
-│   ├── api-discovery
-│   └── data-ingestion
 ├── config/                         # Configuration files
 │   ├── api-discovery.yaml
 │   ├── data-ingestion.yaml

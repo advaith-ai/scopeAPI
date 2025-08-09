@@ -31,6 +31,7 @@ ScopeAPI employs a distributed, microservices-based architecture designed for sc
 - **Security Testing Engine**: Automated vulnerability testing
 - **Gateway Integration Service**: Multi-gateway management (Kong, NGINX, Traefik, Envoy, HAProxy)
 - **Data Ingestion Service**: High-volume traffic processing
+- **Admin Console Service**: Centralized management interface with Angular frontend
 
 ### **Technology Stack**
 - **Backend**: Go microservices with Gin framework
@@ -78,15 +79,19 @@ For detailed architecture information, see [Technical Architecture](./docs/Scope
    docker-compose up -d
    ```
 
-3. **Start the admin console**
+3. **Start the admin console microservice**
    ```bash
-   cd adminConsole
-   npm install
-   npm start
+   # Option A: Using Docker Compose (Recommended)
+   docker-compose up admin-console
+   
+   # Option B: Local development
+   cd backend/services/admin-console
+   make full-build
+   make run
    ```
 
 4. **Access the application**
-   - Admin Console: http://localhost:4200
+   - Admin Console: http://localhost:8086 (Docker) or http://localhost:8080 (Local)
    - API Gateway: http://localhost:8080
 
 ### Development Setup
@@ -95,9 +100,9 @@ For detailed development setup instructions, see [README-RUN.md](README-RUN.md).
 
 ## 📚 Documentation
 
-- **[Product Overview](ScopeAPI_Product_Overview.md)** - High-level product overview and features
-- **[Technical Architecture](ScopeAPI_Technical_Architecture.md)** - Detailed system architecture and design
-- **[Project Structure](ScopeAPI_Project_Structure.md)** - Complete project structure and organization
+- **[Product Overview](./docs/ScopeAPI_Product_Overview.md)** - High-level product overview and features
+- **[Technical Architecture](./docs/ScopeAPI_Technical_Architecture.md)** - Detailed system architecture and design
+- **[Project Structure](./docs/ScopeAPI_Project_Structure.md)** - Complete project structure and organization
 
 ## 🛠️ Development
 
@@ -112,6 +117,12 @@ go run ./services/api-discovery/cmd/main.go
 ### Admin Console Development
 
 ```bash
+# Option 1: Full microservice (Recommended)
+cd backend/services/admin-console
+make full-build
+make run
+
+# Option 2: Angular development only
 cd adminConsole
 npm install
 ng serve

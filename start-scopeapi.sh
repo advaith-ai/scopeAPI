@@ -152,55 +152,84 @@ check_kafka() {
 start_data_ingestion() {
     echo "[INFO] Starting Data Ingestion Service..."
     
-    cd backend/services/data-ingestion
-    
-    # Build the data ingestion service from the root directory
-    if go build -o data-ingestion ./cmd; then
+    # Build services using centralized Makefile
+    echo "[INFO] Building backend services..."
+    cd backend
+    if make data-ingestion; then
         echo "[SUCCESS] Data Ingestion Service built successfully"
         
-        # Start the service
+        # Start the service from root bin directory
         echo "[INFO] Starting Data Ingestion Service on port $DATA_INGESTION_PORT..."
-        ./data-ingestion &
+        cd ..
+        ./bin/data-ingestion &
         DATA_INGESTION_PID=$!
         echo "[SUCCESS] Data Ingestion Service started with PID: $DATA_INGESTION_PID"
     else
         echo "[ERROR] Failed to build Data Ingestion Service"
         exit 1
     fi
-    
-    cd ../../..
 }
 
 # Start API Discovery Service
 start_api_discovery() {
     echo "[INFO] Starting API Discovery Service..."
-    echo "[WARNING] API Discovery Service not yet implemented"
+    
+    # Build API Discovery Service
+    cd backend
+    if make api-discovery; then
+        echo "[SUCCESS] API Discovery Service built successfully"
+        
+        # Start the service from root bin directory
+        echo "[INFO] Starting API Discovery Service on port $API_DISCOVERY_PORT..."
+        cd ..
+        ./bin/api-discovery &
+        API_DISCOVERY_PID=$!
+        echo "[SUCCESS] API Discovery Service started with PID: $API_DISCOVERY_PID"
+    else
+        echo "[ERROR] Failed to build API Discovery Service"
+        return 1
+    fi
 }
 
 # Start Threat Detection Service
 start_threat_detection() {
     echo "[INFO] Starting Threat Detection Service..."
-    echo "[WARNING] Threat Detection Service not yet implemented"
+    
+    # Build Threat Detection Service (if compilation issues are fixed)
+    cd backend
+    if make threat-detection 2>/dev/null; then
+        echo "[SUCCESS] Threat Detection Service built successfully"
+        
+        # Start the service from root bin directory
+        echo "[INFO] Starting Threat Detection Service on port $THREAT_DETECTION_PORT..."
+        cd ..
+        ./bin/threat-detection &
+        THREAT_DETECTION_PID=$!
+        echo "[SUCCESS] Threat Detection Service started with PID: $THREAT_DETECTION_PID"
+    else
+        echo "[WARNING] Threat Detection Service has compilation issues, skipping..."
+        return 0
+    fi
 }
 
-# Start Frontend
-start_frontend() {
-    echo "[INFO] Starting Frontend..."
+# Start Admin Console
+start_admin_console() {
+    echo "[INFO] Starting Admin Console..."
     
-    cd frontend
+    cd adminConsole
     
-    # Check if frontend dependencies are installed
+    # Check if admin console dependencies are installed
     if [ -d "node_modules" ]; then
-        echo "[INFO] Frontend dependencies are already installed"
+        echo "[INFO] Admin Console dependencies are already installed"
     else
-        echo "[INFO] Installing frontend dependencies..."
+        echo "[INFO] Installing Admin Console dependencies..."
         npm install
     fi
     
     echo "[INFO] Starting Angular development server..."
     npm start &
-    FRONTEND_PID=$!
-    echo "[SUCCESS] Frontend started with PID: $FRONTEND_PID"
+    ADMIN_CONSOLE_PID=$!
+    echo "[SUCCESS] Admin Console started with PID: $ADMIN_CONSOLE_PID"
     
     cd ..
 }
@@ -225,18 +254,24 @@ main() {
     start_data_ingestion
     start_api_discovery
     start_threat_detection
-    start_frontend
+    start_admin_console
     
     echo ""
     echo "📊 Data Ingestion Service: http://localhost:$DATA_INGESTION_PORT"
-    echo "🌐 Frontend: http://localhost:4200 (if started)"
-    echo "📈 Health Check: http://localhost:$DATA_INGESTION_PORT/health"
+    echo "🔍 API Discovery Service: http://localhost:$API_DISCOVERY_PORT"
+    echo "🛡️ Threat Detection Service: http://localhost:$THREAT_DETECTION_PORT"
+    echo "🌐 Admin Console: http://localhost:4200 (if started)"
+    echo ""
+    echo "📈 Health Checks:"
+    echo "  • Data Ingestion: http://localhost:$DATA_INGESTION_PORT/health"
+    echo "  • API Discovery: http://localhost:$API_DISCOVERY_PORT/health"
+    echo "  • Threat Detection: http://localhost:$THREAT_DETECTION_PORT/health"
     echo "📊 Metrics: http://localhost:$DATA_INGESTION_PORT/metrics"
     echo ""
     echo "Press Ctrl+C to stop all services"
     
     # Wait for interrupt
-    trap 'echo ""; echo "🛑 Shutting down ScopeAPI Platform..."; kill $DATA_INGESTION_PID $FRONTEND_PID 2>/dev/null; exit 0' INT
+    trap 'echo ""; echo "🛑 Shutting down ScopeAPI Platform..."; kill $DATA_INGESTION_PID $API_DISCOVERY_PID $THREAT_DETECTION_PID $ADMIN_CONSOLE_PID 2>/dev/null; exit 0' INT
     wait
 }
 

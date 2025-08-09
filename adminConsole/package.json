@@ -1,12 +1,19 @@
 {
-  "name": "web-ui",
+  "name": "admin-console",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "clean": "npm run clean:all",
+    "clean:all": "npm run clean:cache && npm run clean:dist && npm run clean:deps",
+    "clean:cache": "rimraf .angular/cache",
+    "clean:dist": "rimraf dist",
+    "clean:deps": "rimraf node_modules package-lock.json",
+    "clean:install": "npm run clean:all && npm install",
+    "fresh-start": "npm run clean:all && npm install && npm start"
   },
   "private": true,
   "dependencies": {
@@ -33,6 +40,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "rimraf": "^5.0.5",
     "typescript": "~5.1.3"
   }
 }

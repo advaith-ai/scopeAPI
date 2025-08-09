@@ -1,0 +1,50 @@
+environment: development
+
+server:
+  host: "0.0.0.0"
+  port: "8080"
+
+cors:
+  allowed_origins:
+    - "*"
+  allowed_methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "DELETE"
+    - "OPTIONS"
+  allowed_headers:
+    - "*"
+
+static:
+  path: "./dist"
+
+logging:
+  level: "info"
+  format: "json"
+
+database:
+  host: "postgres"
+  port: 5432
+  name: "scopeapi_admin"
+  user: "scopeapi_user"
+  password: "scopeapi_password"
+  sslmode: "disable"
+
+redis:
+  host: "redis"
+  port: 6379
+  password: ""
+  db: 0
+
+services:
+  api_discovery:
+    url: "http://api-discovery:8080"
+  threat_detection:
+    url: "http://threat-detection:8080"
+  data_protection:
+    url: "http://data-protection:8080"
+  gateway_integration:
+    url: "http://gateway-integration:8080"
+  attack_blocking:
+    url: "http://attack-blocking:8080" 

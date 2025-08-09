@@ -89,13 +89,19 @@ go run cmd/main.go
 - **URL**: http://localhost:8080
 - **Health**: http://localhost:8080/health
 
-**Admin Console:**
+**Admin Console Microservice:**
 ```bash
+# Option A: Full microservice build
+cd backend/services/admin-console
+make full-build
+make run
+
+# Option B: Angular development only
 cd adminConsole
 npm install
 npm start
 ```
-- **URL**: http://localhost:4200
+- **URL**: http://localhost:8080 (Microservice) or http://localhost:4200 (Angular dev)
 
 ## 📊 Available Services
 
@@ -106,14 +112,14 @@ npm start
 | **Data Ingestion** | ✅ Complete | 8080 | Captures and processes API traffic |
 | **API Discovery** | ✅ Complete | 8081 | Discovers and catalogs API endpoints |
 | **Threat Detection** | ✅ Complete | 8082 | Detects malicious API requests |
-| **Admin Console** | ✅ Complete | 4200 | Angular UI dashboard |
+| **Admin Console** | ✅ Complete | 8086/8080 | Angular UI dashboard (Microservice) |
+| **Attack Blocking** | ✅ Complete | 8084 | Real-time request blocking |
+| **Data Protection** | ✅ Complete | 8083 | PII detection and classification |
 
 ### **⚠️ Needs Implementation**
 
 | Service | Status | Description |
 |---------|--------|-------------|
-| Attack Blocking | 🚧 Partial | Real-time request blocking |
-| Data Protection | 🚧 Partial | PII detection and classification |
 | Contextualization | ❌ Missing | Attack context enrichment |
 | Cloud Intelligence | ❌ Missing | Centralized threat intelligence |
 
@@ -139,6 +145,41 @@ export KAFKA_TOPIC_PREFIX=scopeapi
 export DATA_INGESTION_PORT=8080
 export API_DISCOVERY_PORT=8081
 export THREAT_DETECTION_PORT=8082
+export ADMIN_CONSOLE_PORT=8080
+
+# Environment
+export ENVIRONMENT=development
+```
+
+### **Microservice Communication**
+
+**Important**: In a microservices architecture, services communicate using service names, not localhost:
+
+#### **Docker Compose (Production)**
+```yaml
+# ✅ Correct - Use service names
+services:
+  api_discovery:
+    url: "http://api-discovery:8080"
+  threat_detection:
+    url: "http://threat-detection:8080"
+```
+
+#### **Local Development**
+```yaml
+# ✅ Correct - Use localhost for local dev
+services:
+  api_discovery:
+    url: "http://localhost:8081"
+  threat_detection:
+    url: "http://localhost:8082"
+```
+
+#### **Environment Variables**
+```bash
+# ✅ Correct - Override via environment
+export SERVICE_API_DISCOVERY_URL=http://api-discovery:8080
+export SERVICE_THREAT_DETECTION_URL=http://threat-detection:8080
 ```
 
 ### **Configuration Files**
@@ -148,6 +189,9 @@ The services use YAML configuration files:
 - **Data Ingestion**: `backend/services/data-ingestion/config/data-ingestion.yaml`
 - **API Discovery**: Uses environment variables and defaults
 - **Threat Detection**: Uses environment variables and defaults
+- **Admin Console**: 
+  - Development: `backend/services/admin-console/config/config.development.yaml`
+  - Production: `backend/services/admin-console/config/config.production.yaml`
 
 ## 🧪 Testing the Services
 
@@ -195,6 +239,23 @@ curl -X POST http://localhost:8082/api/v1/threats/analyze \
   }'
 ```
 
+### **Admin Console Service**
+
+Test the admin console APIs:
+```bash
+# Health check
+curl http://localhost:8080/api/v1/health
+
+# Dashboard statistics
+curl http://localhost:8080/api/v1/dashboard/stats
+
+# Service status (inter-service communication)
+curl http://localhost:8080/api/v1/services/status
+
+# User management
+curl http://localhost:8080/api/v1/users
+```
+
 ## 📈 Health Checks
 
 Monitor service health:
@@ -210,7 +271,8 @@ curl http://localhost:8081/health
 curl http://localhost:8082/health
 
 # Admin Console
-curl http://localhost:4200
+curl http://localhost:8080/api/v1/health
+```
 ```
 
 ## 🐛 Troubleshooting
@@ -272,6 +334,78 @@ tail -f backend/services/api-discovery/logs/*.log
 
 # Threat Detection logs
 tail -f backend/services/threat-detection/logs/*.log
+
+# Admin Console logs
+tail -f backend/services/admin-console/logs/*.log
+```
+```
+
+## 🏗️ Admin Console Microservice
+
+The admin console is now a full-fledged microservice that serves both the Angular frontend and provides backend APIs.
+
+### **Architecture**
+- **Frontend**: Angular 17+ application served as static files
+- **Backend**: Go microservice with Gin framework
+- **APIs**: RESTful endpoints for user management, dashboard stats, system monitoring
+- **Service Discovery**: Built-in inter-service communication
+
+### **Key Features**
+- **Static File Serving**: Serves the Angular application
+- **API Gateway**: Centralized admin APIs
+- **Service Monitoring**: Health checks for all microservices
+- **User Management**: CRUD operations for users
+- **Dashboard Statistics**: Real-time metrics and analytics
+
+### **Development Workflow**
+
+#### **Option 1: Full Microservice (Recommended)**
+```bash
+cd backend/services/admin-console
+
+# Build everything (Angular + Go)
+make full-build
+
+# Run the service
+make run
+
+# Access at: http://localhost:8080
+```
+
+#### **Option 2: Angular Development Only**
+```bash
+cd adminConsole
+npm install
+npm start
+
+# Access at: http://localhost:4200
+```
+
+#### **Option 3: Docker**
+```bash
+# Build and run with Docker Compose
+docker-compose up admin-console
+
+# Access at: http://localhost:8086
+```
+
+### **Configuration**
+The service supports environment-based configuration:
+- **Development**: `config/config.development.yaml` (uses localhost)
+- **Production**: `config/config.production.yaml` (uses service names)
+
+### **Inter-Service Communication**
+The admin console can communicate with other microservices:
+```bash
+# Check service status
+curl http://localhost:8080/api/v1/services/status
+
+# This will show health of all microservices:
+# - api-discovery
+# - threat-detection
+# - data-protection
+# - gateway-integration
+# - attack-blocking
 ```
 
 ## 🚀 Production Deployment
@@ -292,14 +426,18 @@ Each service provides REST API endpoints:
 - **Data Ingestion API**: http://localhost:8080/api/v1/
 - **API Discovery API**: http://localhost:8081/api/v1/
 - **Threat Detection API**: http://localhost:8082/api/v1/
+- **Admin Console API**: http://localhost:8080/api/v1/
+- **Attack Blocking API**: http://localhost:8084/api/v1/
+- **Data Protection API**: http://localhost:8083/api/v1/
 
 ## 🎯 Next Steps
 
 1. **Test all services** using the provided examples
-2. **Explore the admin console** at http://localhost:4200
-3. **Implement missing components** (Attack Blocking, Data Protection)
+2. **Explore the admin console** at http://localhost:8080 (Microservice) or http://localhost:4200 (Angular dev)
+3. **Test inter-service communication** using the service status endpoint
 4. **Add authentication** and security features
 5. **Scale the services** for production use
+6. **Implement missing components** (Contextualization, Cloud Intelligence)
 
 ## 📞 Support
 

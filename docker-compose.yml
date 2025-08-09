@@ -239,6 +239,37 @@ services:
       - scopeapi-network
     restart: unless-stopped
 
+  # Admin Console Service
+  admin-console:
+    build:
+      context: ./backend
+      dockerfile: services/admin-console/Dockerfile
+    container_name: scopeapi-admin-console
+    environment:
+      - ENVIRONMENT=production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=scopeapi_admin
+      - DB_USER=scopeapi_user
+      - DB_PASSWORD=scopeapi_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SERVICE_API_DISCOVERY_URL=http://api-discovery:8080
+      - SERVICE_THREAT_DETECTION_URL=http://threat-detection:8080
+      - SERVICE_DATA_PROTECTION_URL=http://data-protection:8080
+      - SERVICE_GATEWAY_INTEGRATION_URL=http://gateway-integration:8080
+      - SERVICE_ATTACK_BLOCKING_URL=http://attack-blocking:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8086:8080"
+    networks:
+      - scopeapi-network
+    restart: unless-stopped
+
   # API Gateway (NGINX)
   api-gateway:
     image: nginx:alpine
@@ -258,12 +289,12 @@ services:
       - scopeapi-network
     restart: unless-stopped
 
-  # Frontend Application
-  frontend:
+  # Admin Console Application
+  admin-console:
     build:
-      context: ./frontend
+      context: ./adminConsole
       dockerfile: Dockerfile
-    container_name: scopeapi-frontend
+    container_name: scopeapi-admin-console
     ports:
       - "4200:80"
     depends_on:

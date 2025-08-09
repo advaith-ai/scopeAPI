@@ -8,7 +8,7 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'web-ui';
+  title = 'admin-console';
   currentUrl: string = '';
 
   constructor(private router: Router) {
