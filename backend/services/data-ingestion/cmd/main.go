@@ -55,8 +55,8 @@ func main() {
 	if len(cfg.Messaging.Kafka.Brokers) > 0 {
 		// Convert config.KafkaConfig to kafka.Config
 		kafkaConfig := kafka.Config{
-			Brokers:        cfg.Messaging.Kafka.Brokers,
-			TopicPrefix:    cfg.Messaging.Kafka.TopicPrefix,
+			Brokers:     cfg.Messaging.Kafka.Brokers,
+			TopicPrefix: cfg.Messaging.Kafka.TopicPrefix,
 			ProducerConfig: kafka.ProducerConfig{
 				Acks:           cfg.Messaging.Kafka.ProducerConfig.Acks,
 				Retries:        cfg.Messaging.Kafka.ProducerConfig.Retries,
@@ -87,8 +87,8 @@ func main() {
 	if kafkaProducer != nil {
 		// Convert config.KafkaConfig to kafka.Config
 		kafkaConfig := kafka.Config{
-			Brokers:        cfg.Messaging.Kafka.Brokers,
-			TopicPrefix:    cfg.Messaging.Kafka.TopicPrefix,
+			Brokers:     cfg.Messaging.Kafka.Brokers,
+			TopicPrefix: cfg.Messaging.Kafka.TopicPrefix,
 			ProducerConfig: kafka.ProducerConfig{
 				Acks:           cfg.Messaging.Kafka.ProducerConfig.Acks,
 				Retries:        cfg.Messaging.Kafka.ProducerConfig.Retries,
@@ -127,7 +127,7 @@ func main() {
 	}
 	parserService := services.NewDataParserService(logger, cfg)
 	normalizerService := services.NewDataNormalizerService(logger, cfg)
-	
+
 	var queueService services.QueueServiceInterface
 	if kafkaProducer != nil {
 		queueService = services.NewQueueService(kafkaProducer, logger, cfg)
@@ -200,7 +200,7 @@ func main() {
 		go func() {
 			backoff := time.Second
 			maxBackoff := 30 * time.Second
-			
+
 			for {
 				select {
 				case <-ctx.Done():
@@ -216,7 +216,7 @@ func main() {
 						}
 						continue
 					}
-					
+
 					// Reset backoff on successful connection
 					backoff = time.Second
 
@@ -287,4 +287,4 @@ func processConfigUpdate(message kafka.Message, ingestionService services.DataIn
 	default:
 		logger.Warn("Unknown configuration update type", "type", configUpdate.Type)
 	}
-} 
+}

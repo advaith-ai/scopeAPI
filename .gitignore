@@ -62,3 +62,9 @@ tmp/
 # Kubernetes
 *.kubeconfig
 kubeconfig
+
+# Angular cache
+.angular/
+
+# PID files
+*.pid

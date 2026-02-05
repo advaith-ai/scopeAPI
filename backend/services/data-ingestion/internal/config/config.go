@@ -49,8 +49,8 @@ type MessagingConfig struct {
 }
 
 type KafkaConfig struct {
-	Brokers        []string      `yaml:"brokers"`
-	TopicPrefix    string        `yaml:"topic_prefix"`
+	Brokers        []string       `yaml:"brokers"`
+	TopicPrefix    string         `yaml:"topic_prefix"`
 	ProducerConfig ProducerConfig `yaml:"producer"`
 	ConsumerConfig ConsumerConfig `yaml:"consumer"`
 }
@@ -74,16 +74,16 @@ type ConsumerConfig struct {
 }
 
 type IngestionConfig struct {
-	BatchSize        int           `yaml:"batch_size"`
-	BatchTimeout     time.Duration `yaml:"batch_timeout"`
-	MaxConcurrency   int           `yaml:"max_concurrency"`
-	BufferSize       int           `yaml:"buffer_size"`
-	RetryAttempts    int           `yaml:"retry_attempts"`
-	RetryDelay       time.Duration `yaml:"retry_delay"`
-	Validation       bool          `yaml:"validation"`
-	Compression      bool          `yaml:"compression"`
-	Topics           TopicsConfig  `yaml:"topics"`
-	Formats          FormatsConfig `yaml:"formats"`
+	BatchSize      int           `yaml:"batch_size"`
+	BatchTimeout   time.Duration `yaml:"batch_timeout"`
+	MaxConcurrency int           `yaml:"max_concurrency"`
+	BufferSize     int           `yaml:"buffer_size"`
+	RetryAttempts  int           `yaml:"retry_attempts"`
+	RetryDelay     time.Duration `yaml:"retry_delay"`
+	Validation     bool          `yaml:"validation"`
+	Compression    bool          `yaml:"compression"`
+	Topics         TopicsConfig  `yaml:"topics"`
+	Formats        FormatsConfig `yaml:"formats"`
 }
 
 type TopicsConfig struct {
@@ -100,23 +100,23 @@ type FormatsConfig struct {
 }
 
 type ParserConfig struct {
-	MaxPayloadSize int           `yaml:"max_payload_size"`
-	Timeout        time.Duration `yaml:"timeout"`
+	MaxPayloadSize int            `yaml:"max_payload_size"`
+	Timeout        time.Duration  `yaml:"timeout"`
 	Formats        []FormatConfig `yaml:"formats"`
 }
 
 type FormatConfig struct {
-	Name        string   `yaml:"name"`
-	Extensions  []string `yaml:"extensions"`
-	MimeTypes   []string `yaml:"mime_types"`
-	Enabled     bool     `yaml:"enabled"`
-	Priority    int      `yaml:"priority"`
-	Config      map[string]interface{} `yaml:"config"`
+	Name       string                 `yaml:"name"`
+	Extensions []string               `yaml:"extensions"`
+	MimeTypes  []string               `yaml:"mime_types"`
+	Enabled    bool                   `yaml:"enabled"`
+	Priority   int                    `yaml:"priority"`
+	Config     map[string]interface{} `yaml:"config"`
 }
 
 type NormalizerConfig struct {
-	DefaultSchema string                    `yaml:"default_schema"`
-	Schemas       map[string]SchemaConfig   `yaml:"schemas"`
+	DefaultSchema string                       `yaml:"default_schema"`
+	Schemas       map[string]SchemaConfig      `yaml:"schemas"`
 	Transformers  map[string]TransformerConfig `yaml:"transformers"`
 }
 
@@ -161,16 +161,16 @@ type RetryPolicy struct {
 }
 
 type SecurityConfig struct {
-	EnableTLS     bool   `yaml:"enable_tls"`
-	CertFile      string `yaml:"cert_file"`
-	KeyFile       string `yaml:"key_file"`
-	AllowedHosts  []string `yaml:"allowed_hosts"`
-	RateLimit     RateLimitConfig `yaml:"rate_limit"`
+	EnableTLS    bool            `yaml:"enable_tls"`
+	CertFile     string          `yaml:"cert_file"`
+	KeyFile      string          `yaml:"key_file"`
+	AllowedHosts []string        `yaml:"allowed_hosts"`
+	RateLimit    RateLimitConfig `yaml:"rate_limit"`
 }
 
 type RateLimitConfig struct {
-	Enabled  bool  `yaml:"enabled"`
-	Requests int   `yaml:"requests"`
+	Enabled  bool          `yaml:"enabled"`
+	Requests int           `yaml:"requests"`
 	Window   time.Duration `yaml:"window"`
 }
 
@@ -233,6 +233,8 @@ func LoadConfig() (*Config, error) {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
+	loadFromEnv(&config)
+
 	return &config, nil
 }
 
@@ -251,7 +253,7 @@ func loadFromEnv(config *Config) {
 	if host := os.Getenv("SERVER_HOST"); host != "" {
 		config.Server.Host = host
 	}
-	
+
 	// Database configuration
 	if host := os.Getenv("DB_HOST"); host != "" {
 		config.Database.PostgreSQL.Host = host
@@ -270,7 +272,7 @@ func loadFromEnv(config *Config) {
 	if database := os.Getenv("DB_NAME"); database != "" {
 		config.Database.PostgreSQL.Database = database
 	}
-	
+
 	// Kafka configuration
 	if brokers := os.Getenv("KAFKA_BROKERS"); brokers != "" {
 		config.Messaging.Kafka.Brokers = []string{brokers}
@@ -297,7 +299,7 @@ func setDefaults(config *Config) {
 	if config.Server.IdleTimeout == 0 {
 		config.Server.IdleTimeout = 60 * time.Second
 	}
-	
+
 	// Database defaults
 	if config.Database.PostgreSQL.Host == "" {
 		config.Database.PostgreSQL.Host = "localhost"
@@ -311,7 +313,7 @@ func setDefaults(config *Config) {
 	if config.Database.PostgreSQL.MaxConns == 0 {
 		config.Database.PostgreSQL.MaxConns = 10
 	}
-	
+
 	// Kafka defaults
 	if len(config.Messaging.Kafka.Brokers) == 0 {
 		config.Messaging.Kafka.Brokers = []string{"localhost:9092"}
@@ -319,7 +321,7 @@ func setDefaults(config *Config) {
 	if config.Messaging.Kafka.TopicPrefix == "" {
 		config.Messaging.Kafka.TopicPrefix = "scopeapi"
 	}
-	
+
 	// Ingestion defaults
 	if config.Ingestion.BatchSize == 0 {
 		config.Ingestion.BatchSize = 1000
@@ -339,7 +341,7 @@ func setDefaults(config *Config) {
 	if config.Ingestion.RetryDelay == 0 {
 		config.Ingestion.RetryDelay = 1 * time.Second
 	}
-	
+
 	// Topics defaults
 	if config.Ingestion.Topics.APITraffic == "" {
 		config.Ingestion.Topics.APITraffic = "api_traffic"
@@ -356,7 +358,7 @@ func setDefaults(config *Config) {
 	if config.Ingestion.Topics.Metrics == "" {
 		config.Ingestion.Topics.Metrics = "metrics"
 	}
-	
+
 	// Formats defaults
 	if len(config.Ingestion.Formats.Supported) == 0 {
 		config.Ingestion.Formats.Supported = []string{"json", "xml", "yaml", "protobuf"}
@@ -364,7 +366,7 @@ func setDefaults(config *Config) {
 	if config.Ingestion.Formats.Default == "" {
 		config.Ingestion.Formats.Default = "json"
 	}
-	
+
 	// Parser defaults
 	if config.Parser.MaxPayloadSize == 0 {
 		config.Parser.MaxPayloadSize = 10 * 1024 * 1024 // 10MB
@@ -372,7 +374,7 @@ func setDefaults(config *Config) {
 	if config.Parser.Timeout == 0 {
 		config.Parser.Timeout = 30 * time.Second
 	}
-	
+
 	// Queue defaults
 	if config.Queue.MaxSize == 0 {
 		config.Queue.MaxSize = 10000
@@ -389,7 +391,7 @@ func setDefaults(config *Config) {
 	if config.Queue.RetryPolicy.MaxBackoff == 0 {
 		config.Queue.RetryPolicy.MaxBackoff = 60 * time.Second
 	}
-	
+
 	// Monitoring defaults
 	if config.Monitoring.Metrics.Path == "" {
 		config.Monitoring.Metrics.Path = "/metrics"
@@ -403,22 +405,22 @@ func validateConfig(config *Config) error {
 	if config.Server.Port == "" {
 		return fmt.Errorf("server port is required")
 	}
-	
+
 	if config.Database.PostgreSQL.Host == "" {
 		return fmt.Errorf("database host is required")
 	}
-	
+
 	if len(config.Messaging.Kafka.Brokers) == 0 {
 		return fmt.Errorf("kafka brokers are required")
 	}
-	
+
 	if config.Ingestion.BatchSize <= 0 {
 		return fmt.Errorf("batch size must be greater than 0")
 	}
-	
+
 	if config.Ingestion.MaxConcurrency <= 0 {
 		return fmt.Errorf("max concurrency must be greater than 0")
 	}
-	
+
 	return nil
-} 
+}
