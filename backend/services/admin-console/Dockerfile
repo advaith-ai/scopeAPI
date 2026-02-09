@@ -4,9 +4,9 @@ FROM node:18-alpine AS angular-builder
 # Set working directory
 WORKDIR /app
 
-# Copy Angular application
-COPY ../../adminConsole/package*.json ./
-RUN npm ci --only=production
+# Copy Angular application (from project root)
+COPY adminConsole/package*.json ./
+RUN npm ci
 
 # Copy Angular source code
 COPY ../../adminConsole/ ./
