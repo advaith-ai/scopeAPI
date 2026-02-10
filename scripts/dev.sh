@@ -175,8 +175,8 @@ start_dev_environment() {
     done
     
     print_success "Development environment started successfully!"
-    print_info "Use './dev.sh status' to check service status"
-    print_info "Use './dev.sh logs [service]' to view logs"
+    print_status "Use './dev.sh status' to check service status"
+    print_status "Use './dev.sh logs [service]' to view logs"
 }
 
 # Function to stop development environment
@@ -258,7 +258,7 @@ start_debug() {
     docker-compose -f "$SCRIPT_DIR/docker-compose.debug.yml" --env-file "$ENV_FILE" up -d "$service"
     
     print_success "$service started in debug mode!"
-    print_info "Connect your debugger to localhost:2345"
+    print_status "Connect your debugger to localhost:2345"
 }
 
 # Function to run tests
